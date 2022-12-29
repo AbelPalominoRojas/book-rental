@@ -1,4 +1,3 @@
-import { Outlet } from 'react-router-dom';
 import logo from '../template/images/logo.png';
 import bgMain from '../template/images/bg-main.jpg';
 
@@ -23,8 +22,7 @@ const Auth = (): JSX.Element => {
 								<img src={logo} alt="Home" className="img-fluid" />
 							</a>
 						</div>
-
-						<Outlet />
+						Body contend
 					</div>
 				</div>
 			</article>

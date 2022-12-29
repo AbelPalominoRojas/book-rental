@@ -1,6 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
 const LeftSidebar = (): JSX.Element => {
 	return (
 		<aside className="left-sidebar">
