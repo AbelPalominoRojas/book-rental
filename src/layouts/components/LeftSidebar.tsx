@@ -1,4 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 const LeftSidebar = (): JSX.Element => {
 	return (
@@ -44,7 +45,7 @@ const LeftSidebar = (): JSX.Element => {
 							</a>
 							<ul aria-expanded="false" className="collapse">
 								<li>
-									<a href="#">Editoriales</a>
+									<Link to="/editorial">Editoriales</Link>
 								</li>
 							</ul>
 						</li>
