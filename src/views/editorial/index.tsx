@@ -5,24 +5,46 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
+import Form from 'react-bootstrap/Form';
 import {
 	createColumnHelper,
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 } from '@tanstack/react-table';
+import { useFormik } from 'formik';
 import { EditorialService } from '../../services';
 import { EditorialModel, FilterPage, RequestPagination, ResponsePagination } from '../../types';
 
 const index = (): JSX.Element => {
 	// Attributes
 	const [dataEditorial, setDataEditorial] = useState<ResponsePagination<EditorialModel>>();
+	const [searchFilter, setSearchFilter] = useState<RequestPagination<EditorialModel>>({
+		page: 1,
+		perPage: 10,
+	});
+
+	const formik = useFormik<EditorialModel>({
+		initialValues: {
+			codigo: '',
+			nombre: '',
+		},
+		onSubmit: values => {
+			setSearchFilter(prev => {
+				return {
+					...prev,
+					page: 1,
+					filter: values,
+				};
+			});
+		},
+	});
 
 	// Hooks
 	useEffect(() => {
 		console.log('useEffect');
-		void paginatedSerachEditoriales({ page: 1, perPage: 10 });
-	}, []);
+		void paginatedSerachEditoriales();
+	}, [searchFilter]);
 
 	// Vendor
 	const columnHelper = createColumnHelper<EditorialModel>();
@@ -52,11 +74,7 @@ const index = (): JSX.Element => {
 	});
 
 	// Methods
-	const paginatedSerachEditoriales = async (payload: FilterPage): Promise<void> => {
-		const searchFilter: RequestPagination<EditorialModel> = {
-			page: payload.page,
-			perPage: payload.perPage,
-		};
+	const paginatedSerachEditoriales = async (): Promise<void> => {
 		const response = await EditorialService.paginatedSearch(searchFilter);
 		const data: ResponsePagination<EditorialModel> = response.data;
 
@@ -67,7 +85,14 @@ const index = (): JSX.Element => {
 
 	const handleGotoPage = (payload: FilterPage): void => {
 		console.log('gotoPage', payload);
-		void paginatedSerachEditoriales({ page: payload.page, perPage: payload.perPage });
+
+		setSearchFilter(prev => {
+			return {
+				...prev,
+				page: payload.page,
+				perPage: payload.perPage,
+			};
+		});
 	};
 
 	return (
@@ -92,6 +117,41 @@ const index = (): JSX.Element => {
 			</Row>
 			<Row>
 				<Col xs={12}>
+					<Card className="mb-2">
+						<Card.Header className="d-flex justify-content-between">
+							Búsqueda
+							<div>
+								<Button variant="primary" size="sm" onClick={() => formik.handleSubmit()}>
+									Buscar
+								</Button>
+							</div>
+						</Card.Header>
+						<Card.Body>
+							<Row className="g-3">
+								<Col xs={12} sm={6} md={4} xxl={3}>
+									<Form.Label>Codigo</Form.Label>
+									<Form.Control
+										type="text"
+										size="sm"
+										name="codigo"
+										value={formik.values.codigo ?? ''}
+										onChange={formik.handleChange}
+									/>
+								</Col>
+								<Col xs={12} sm={6} md={4} xxl={3}>
+									<Form.Label>Nombre</Form.Label>
+									<Form.Control
+										type="text"
+										size="sm"
+										name="nombre"
+										value={formik.values.nombre ?? ''}
+										onChange={formik.handleChange}
+									/>
+								</Col>
+							</Row>
+						</Card.Body>
+					</Card>
+
 					<Card>
 						<Card.Header>Listado de editoriales</Card.Header>
 						<Card.Body>

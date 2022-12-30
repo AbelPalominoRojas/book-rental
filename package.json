@@ -19,6 +19,7 @@
 		"@tanstack/react-table": "^8.7.4",
 		"axios": "^1.2.2",
 		"bootstrap": "^5.2.3",
+		"formik": "^2.2.9",
 		"perfect-scrollbar": "^1.5.5",
 		"qs": "^6.11.0",
 		"react": "^18.2.0",
