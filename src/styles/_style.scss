@@ -294,5 +294,5 @@ input[type='number'] {
 // Hide Arrows From Input Number
 
 .map__body {
-	min-height: 40rem;
+	min-height: calc(100vh - 256px);
 }
