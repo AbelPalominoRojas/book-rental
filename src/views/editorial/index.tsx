@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
+import Pagination from 'react-bootstrap/Pagination';
 import {
 	createColumnHelper,
 	flexRender,
@@ -11,18 +12,16 @@ import {
 	useReactTable,
 } from '@tanstack/react-table';
 import { EditorialService } from '../../services';
-import { EditorialModel, RequestPagination, ResponsePagination } from '../../types';
+import { EditorialModel, FilterPage, RequestPagination, ResponsePagination } from '../../types';
 
 const index = (): JSX.Element => {
 	// Attributes
 	const [dataEditorial, setDataEditorial] = useState<ResponsePagination<EditorialModel>>();
-	const [editoriales, setEditoriales] = useState<EditorialModel[]>([]);
 
 	// Hooks
 	useEffect(() => {
 		console.log('useEffect');
-		// void findAllEditoriales();
-		void paginatedSerachEditoriales();
+		void paginatedSerachEditoriales({ page: 1, perPage: 10 });
 	}, []);
 
 	// Vendor
@@ -53,19 +52,10 @@ const index = (): JSX.Element => {
 	});
 
 	// Methods
-	const findAllEditoriales = async (): Promise<void> => {
-		const response = await EditorialService.findAll();
-		const data: EditorialModel[] = response.data;
-
-		console.log('Editoriales', data);
-
-		setEditoriales(data);
-	};
-
-	const paginatedSerachEditoriales = async (): Promise<void> => {
+	const paginatedSerachEditoriales = async (payload: FilterPage): Promise<void> => {
 		const searchFilter: RequestPagination<EditorialModel> = {
-			page: 2,
-			perPage: 10,
+			page: payload.page,
+			perPage: payload.perPage,
 		};
 		const response = await EditorialService.paginatedSearch(searchFilter);
 		const data: ResponsePagination<EditorialModel> = response.data;
@@ -73,6 +63,11 @@ const index = (): JSX.Element => {
 		console.log('busqueda pagianda', data);
 
 		setDataEditorial(data);
+	};
+
+	const handleGotoPage = (payload: FilterPage): void => {
+		console.log('gotoPage', payload);
+		void paginatedSerachEditoriales({ page: payload.page, perPage: payload.perPage });
 	};
 
 	return (
@@ -126,6 +121,58 @@ const index = (): JSX.Element => {
 									))}
 								</tbody>
 							</Table>
+
+							<div className="d-flex justify-content-between align-items-center flex-wrap">
+								<div className="d-flex justify-content-between align-items-center py-1">
+									<div className="pe-2">
+										Mostrando resgistro del
+										<span className="fw-bold"> {dataEditorial?.from ?? 0}</span> al
+										<span className="fw-bold"> {dataEditorial?.to ?? 0}</span> de un total de
+										<span className="fw-bold"> {dataEditorial?.total ?? 0}</span> registros
+									</div>
+								</div>
+								<Pagination size="sm">
+									<Pagination.First
+										disabled={dataEditorial?.currentPage === 1}
+										onClick={() =>
+											handleGotoPage({
+												page: 1,
+												perPage: dataEditorial?.perPage ?? 10,
+											})
+										}
+									/>
+									<Pagination.Prev
+										disabled={dataEditorial?.currentPage === 1}
+										onClick={() =>
+											handleGotoPage({
+												page: (dataEditorial?.currentPage ?? 0) - 1,
+												perPage: dataEditorial?.perPage ?? 10,
+											})
+										}
+									/>
+
+									<Pagination.Ellipsis />
+
+									<Pagination.Next
+										disabled={dataEditorial?.currentPage === dataEditorial?.lastPage}
+										onClick={() =>
+											handleGotoPage({
+												page: (dataEditorial?.currentPage ?? 0) + 1,
+												perPage: dataEditorial?.perPage ?? 10,
+											})
+										}
+									/>
+									<Pagination.Last
+										disabled={dataEditorial?.currentPage === dataEditorial?.lastPage}
+										onClick={() =>
+											handleGotoPage({
+												page: dataEditorial?.lastPage ?? 0,
+												perPage: dataEditorial?.perPage ?? 10,
+											})
+										}
+									/>
+								</Pagination>
+							</div>
 						</Card.Body>
 					</Card>
 				</Col>
