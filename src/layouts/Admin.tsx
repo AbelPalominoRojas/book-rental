@@ -170,7 +170,7 @@ const Admin = (): JSX.Element => {
 		if (elmBody != null) elmBody.addEventListener('resize', setResize);
 
 		setResize();
-	});
+	},[]);
 
 	// Methods
 	const setResize = (): void => {
