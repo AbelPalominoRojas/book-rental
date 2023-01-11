@@ -2,9 +2,6 @@ import { createRoot } from 'react-dom/client';
 
 import '@popperjs/core';
 import 'bootstrap';
-import 'perfect-scrollbar';
-import './template/js/custom.js';
-import './template/js/sidebarmenu.js';
 
 import './styles/app.scss';
 
